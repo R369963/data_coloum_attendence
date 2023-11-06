@@ -1,0 +1,113 @@
+ import 'package:flutter/material.dart';
+
+class Student {
+  final int amstId;
+  final int amayRollNo;
+  final String amstAdmNo;
+  final String name;
+  final String amstRegistrationNo;
+  final int monthId;
+  final int attendance;
+
+  Student({
+    required this.amstId,
+    required this.amayRollNo,
+    required this.amstAdmNo,
+    required this.name,
+    required this.amstRegistrationNo,
+    required this.monthId,
+    required this.attendance,
+  });
+}
+
+class Months {
+  final int monthsId;
+  final String monthsName;
+
+  Months({
+    required this.monthsId,
+    required this.monthsName,
+  });
+}
+class Stulist {
+  String? name;
+  List<int> numList;
+
+  Stulist({
+    required this.name,
+    required this.numList,
+  });
+
+  @override
+  String toString() {
+    return 'Stulist(name: $name, numList: $numList)';
+  }
+}
+
+void main() {
+  List<Student> studentList = [
+    Student(amstId: 144, amayRollNo: 1, amstAdmNo: "7569685", name: "John", amstRegistrationNo: "422555", monthId: 2, attendance: 21),
+    Student(amstId: 144, amayRollNo: 1, amstAdmNo: "7569685", name: "John", amstRegistrationNo: "422555", monthId: 3, attendance: 24),
+    Student(amstId: 144, amayRollNo: 1, amstAdmNo: "7569685", name: "John", amstRegistrationNo: "422555", monthId: 4, attendance: 17),
+    Student(amstId: 45637, amayRollNo: 2, amstAdmNo: "47631", name: "Tim", amstRegistrationNo: "78567", monthId: 2, attendance: 21),
+    Student(amstId: 45637, amayRollNo: 2, amstAdmNo: "47631", name: "Tim", amstRegistrationNo: "78567", monthId: 3, attendance: 14),
+    Student(amstId: 45637, amayRollNo: 2, amstAdmNo: "47631", name: "Tim", amstRegistrationNo: "78567", monthId: 4, attendance: 30),
+  ];
+
+  Map<String, List<int>> groupedStudents = {};
+
+  for (Student student in studentList) {
+    if (!groupedStudents.containsKey(student.name)) {
+      // If the student's name is not in the Map, create a new entry with an empty list
+      groupedStudents[student.name] = [];
+    }
+    // Add the student's attendance to the list
+    groupedStudents[student.name]!.add(student.attendance);
+  }
+  
+  // Convert the Map to the desired format
+  List<Stulist> formattedStudentList = groupedStudents.entries.map((entry) {
+    return Stulist(name: entry.key, numList: entry.value);
+  }).toList();
+  List<Months> monthsList = [
+    Months(monthsId: 1, monthsName: "January"),
+    Months(monthsId: 2, monthsName: "February"),
+    Months(monthsId: 3, monthsName: "March"),
+  ];
+
+  runApp(MyApp(formattedStudentList, monthsList));
+}
+
+class MyApp extends StatelessWidget {
+  final List<Stulist> studentList;
+  final List<Months> monthsList;
+
+  MyApp(this.studentList, this.monthsList);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Student Attendance'),
+        ),
+        body: DataTable(
+          columns: [
+            DataColumn(label: Text('Student Name')),
+            for (var month in monthsList) DataColumn(label: Text(month.monthsName)),
+          ],
+          rows: [
+            for (var student in studentList)
+              DataRow(
+                cells: [
+                  DataCell(Text(student.name!)),
+                  for (var attendance in student.numList) DataCell(Text(attendance.toStringAsFixed(2))),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+ 
